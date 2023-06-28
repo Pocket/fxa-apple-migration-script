@@ -1,6 +1,7 @@
 import fetch, { Response } from 'node-fetch';
 import config from './config';
 import { AppleSsoIds } from './types';
+import { getAppleKey } from './clientSecret';
 
 /**
  * **This client will not function correctly until the user transfer period has started**
@@ -11,6 +12,8 @@ import { AppleSsoIds } from './types';
  */
 export class AppleClient {
   private access_token: string;
+
+  private apple_key?: string;
 
   /**
    * Request documentation here:
@@ -26,7 +29,7 @@ export class AppleClient {
       grant_type: 'client_credentials',
       scope: 'user.migration',
       client_id: config.apple.client_id,
-      client_secret: config.apple.client_secret,
+      client_secret: await this.getSavedAppleKey(),
     };
 
     const res = await fetch('https://appleid.apple.com/auth/token', {
@@ -75,7 +78,7 @@ export class AppleClient {
       sub: appleSub,
       target: config.apple.mozilla_team_id,
       client_id: config.apple.client_id,
-      client_secret: config.apple.client_secret,
+      client_secret: await this.getSavedAppleKey(),
     };
 
     return fetch('https://appleid.apple.com/auth/usermigrationinfo', {
@@ -142,5 +145,14 @@ export class AppleClient {
       );
     }
     return null;
+  }
+
+  public async getSavedAppleKey(): Promise<string> {
+    if (this.apple_key != undefined) {
+      return this.apple_key;
+    }
+
+    this.apple_key = await getAppleKey();
+    return this.apple_key;
   }
 }

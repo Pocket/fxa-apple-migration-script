@@ -6,5 +6,4 @@ This should be cleaned up after that migration is complete. More notes on how to
 
 ## other files
 
-- `./generateClientSecret.js` - helper script for generating Apple `client_secret`s.
 - `./schema.sql` - a point in time snapshot of sql tables this operates against.
