@@ -5,6 +5,7 @@
   "main": "dist/fxa-apple-migration/main.js",
   "scripts": {
     "build": "rm -rf dist && tsc",
+    "start": "ts-node src/main.ts",
     "test": "jest"
   },
   "author": "",

@@ -1,4 +1,4 @@
-import jose from 'jose';
+import * as jose from 'jose';
 import config from './config';
 
 /*
