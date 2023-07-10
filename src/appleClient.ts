@@ -104,16 +104,13 @@ export class AppleClient {
     if (tries >= config.apple.retry_count) {
       return null;
     }
-
+    // if it is the final retry, console.error
+    const next = tries + 1;
+    const log = next === config.apple.retry_count ? console.error : console.log;
     try {
       const res = await this.fetchTransferSub(appleIds.provider_user_id);
 
       if (!res.ok) {
-        const next = tries + 1;
-        // if it is the final retry, console.error
-        const log =
-          next === config.apple.retry_count ? console.error : console.log;
-
         log(
           `AppleClient getTransferSub error: try: ${tries + 1} status ${
             res.statusText
@@ -138,13 +135,13 @@ export class AppleClient {
     } catch (err) {
       // fetch doesn't throw when it gets a HTTP response, this should only be things like
       // network / runtime errors
-      console.error(
+      log(
         `appleClient getTransferSub - Unexpected error ${
           err?.message ?? err
         }, encountered while processing ${JSON.stringify(appleIds)}`
       );
+      return this.getTransferSub(appleIds, tries + 1);
     }
-    return null;
   }
 
   public async getSavedAppleKey(): Promise<string> {
